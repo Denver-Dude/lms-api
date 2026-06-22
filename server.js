@@ -2,15 +2,16 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const lessonRoutes = require("./routes/lessons");
+
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/courses");
+const lessonRoutes = require("./routes/lessons");
 
 const app = express();
 
-// Connect MongoDB
+// Connect Database
 connectDB();
 
 // Middleware
@@ -29,9 +30,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/lessons", lessonRoutes);
 
-// Start Server
+// Local Development Only
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
+}
+
+// Export for Vercel
+module.exports = app;
